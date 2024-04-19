@@ -10,3 +10,5 @@ Nesse desafio, tive que desenvolver uma aplicação de controle de tarefas no es
 - Mostrar o progresso de conclusão das tarefas
 
 Completei o desafio utilizando ReactJS (TypeScript) e estilizei com Styled-Component, seguindo o layout fornecido no desafio.
+
+Page: https://to-do-list-flame-five.vercel.app
