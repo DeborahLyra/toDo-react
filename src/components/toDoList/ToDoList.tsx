@@ -1,28 +1,70 @@
 import { CheckCircle, Circle, ClipboardText, PlusCircle, Trash } from "@phosphor-icons/react"
-import { useState } from "react"
+import { ChangeEvent, FormEvent, useState } from "react"
 import styled from "styled-components"
+import { v4 as uuidv4 } from 'uuid'
+
+interface Chore {
+    id: string;
+    chore: string;
+    done: boolean;
+}
+
 
 export default function ToDoList() {
 
+    const [listOfChores, setListOfChores] = useState<Chore[]>([]);
 
-    const ex = {
-        id: 1,
-        text: "edjkndebjdsccsdcsdcdskbcbdskcbsbdcvbdsb vdsbvcbsdkvb .ksdbv.edjke ndebjdsccsdcsdcdsk bcbdskcbsbdcvbdsbvdsb vcbsdkvb .ksdbv.edjk debjdsccsdcsdc dskbcbdskcbsbdcvbdsbv dsbvcbsdkvb .ksdbv.",
-        done: false,
+    const [newChore, setNewChore] = useState('')
+
+
+    const handelCreateAChore = (event: FormEvent) => {
+        event.preventDefault()
+        const newText = {
+            id: uuidv4(),
+            chore: newChore,
+            done: false
+        }
+
+        setListOfChores([...listOfChores, newText])
+        setNewChore('')
     }
 
-    const [listOfChores, setListOfChores] = useState([ex])
+    const handleNewChore = (event: ChangeEvent<HTMLInputElement>) => {
+        setNewChore(event.target.value)
+
+    }
+
+    const handleDeleteChore = (choreIDToDelete: string) => {
+        const newLstOfChores = listOfChores.filter(chore => {
+            return chore.id !== choreIDToDelete
+        })
+        setListOfChores(newLstOfChores)
+    }
+
+    const handleDoneChore = (choreIDToChange: string) => {
+        setListOfChores(listOfChores.map(chore => {
+            if (chore.id === choreIDToChange) {
+                return { ...chore, done: !chore.done };
+            }
+            return chore;
+        }));
+    }
+
+    const countDoneChores = () => {
+        return listOfChores.filter(chore => chore.done).length
+    }
+
 
     return (
         <ListContainer>
-            <FormToDo>
-                <input type="text" />
-                <button>Criar <PlusCircle size={32} /></button>
+            <FormToDo onSubmit={handelCreateAChore}>
+                <input type="text" onChange={handleNewChore} value={newChore} />
+                <button type="submit">Criar <PlusCircle size={32} /></button>
             </FormToDo>
             <DivList>
                 <DivCountChores>
                     <p >Tarefas Criadas <span>{listOfChores.length}</span></p>
-                    <p>Tarefas concluidas <span>2 de {listOfChores.length}</span></p>
+                    <p>Tarefas concluidas <span>{countDoneChores()} de {listOfChores.length}</span></p>
                 </DivCountChores>
                 {
                     listOfChores.length === 0 ? (
@@ -39,10 +81,18 @@ export default function ToDoList() {
                                 {
                                     listOfChores.map(item => {
                                         return (
-                                            <DivChore>
-                                                <ButtonCircle><Circle size={24} /></ButtonCircle>
-                                                <p>{item.text}</p>
-                                                <ButtonDelete ><Trash size={24} /></ButtonDelete>
+                                            <DivChore key={item.id}>
+                                                <ButtonCircle
+                                                    onClick={() => handleDoneChore(item.id)}
+                                                >
+                                                    {item.done ? <CheckCircle size={24} style={{ color: 'var(--dark-purple)' }} /> :
+                                                        <Circle size={24} style={{ color: 'var(--blue)' }} />}
+                                                </ButtonCircle>
+                                                <p>{item.chore}</p>
+                                                <ButtonDelete
+                                                    onClick={() => handleDeleteChore(item.id)}>
+                                                    <Trash size={24} />
+                                                </ButtonDelete>
                                             </DivChore>
                                         )
                                     })
@@ -69,11 +119,18 @@ const DivChore = styled.div`
     border-radius: 8px;
     font-size: 0.850rem;
     text-align: justify;
+    margin-bottom: 2rem;
+    min-heigth: 4.5rem; 
 
     button {
        background-color: transparent;
        border: none;
         cursor: pointer;
+        color: var(--gray-300);
+
+        :focus{
+            outline: none;
+        }
     }
 `
 const ButtonCircle = styled.button`
@@ -81,7 +138,9 @@ const ButtonCircle = styled.button`
 `
 
 const ButtonDelete = styled.button`
-    color: var(--red);
+    :hover {
+        color: var(--red);
+    }
 `
 
 const DivWithChores = styled.div`
