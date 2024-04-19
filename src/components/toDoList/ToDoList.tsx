@@ -64,7 +64,7 @@ export default function ToDoList() {
             <DivList>
                 <DivCountChores>
                     <p >Tarefas Criadas <span>{listOfChores.length}</span></p>
-                    <p>Tarefas concluidas <span>{countDoneChores()} de {listOfChores.length}</span></p>
+                    <p>Tarefas Concluídas <span>{countDoneChores()} de {listOfChores.length}</span></p>
                 </DivCountChores>
                 {
                     listOfChores.length === 0 ? (
